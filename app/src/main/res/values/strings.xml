@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">DeveloperReference</string>
+    <!-- Menu -->
+    <string name="searchAll">Search All Resources</string>
+    <string name="searchOfficial">Search Official Documentation</string>
+    <string name="searchForum">Search Q and A/Forums</string>
+    <string name="searchGuide">Search For a Guide/Tutorial</string>
+    <string name="searchCodeExamples">Search for Code Samples</string>
+    <string name="compare">Compare Differences Between Languages</string>
 </resources>
