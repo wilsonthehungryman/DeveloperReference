@@ -8,4 +8,9 @@
     <string name="searchGuide">Search For a Guide/Tutorial</string>
     <string name="searchCodeExamples">Search for Code Samples</string>
     <string name="compare">Compare Differences Between Languages</string>
+    <!-- SearchWeb -->
+    <string name="customQuery">Enter a Search Query:</string>
+    <string name="choosePrebuiltQuery">Choose a Topic:</string>
+    <string name="customGo">Go (custom)</string>
+    <string name="prebuiltGo">Go (from selection)</string>
 </resources>
