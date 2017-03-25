@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rrc.wilson.developerreference">
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,7 +19,11 @@
         <activity
             android:name=".SearchWebActivity"
             android:label="@string/title_activity_search_web"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <service android:name="com.rrc.wilson.developerreference.ClassScraper"
+            android:enabled="true"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
