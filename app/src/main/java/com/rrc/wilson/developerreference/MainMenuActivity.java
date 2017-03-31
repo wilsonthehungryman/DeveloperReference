@@ -48,10 +48,8 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void startClassScraper(){
-        // TODO finish calling intentservice
         Intent intent = new Intent(this, ClassScraper.class);
         intent.putExtra("language", "JAVA");
-//                intent.putExtra("language", Languages.JAVA);
         startService(intent);
     }
 }

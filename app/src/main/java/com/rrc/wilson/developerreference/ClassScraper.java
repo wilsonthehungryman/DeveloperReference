@@ -25,9 +25,6 @@ import java.util.Stack;
 
 public class ClassScraper extends IntentService {
     public ClassScraper(){ super("ClassScraper"); }
-    //public ClassScraper(String name) {
-//        super(name);
-//    }
 
     @Override
     public void onCreate() {
@@ -36,19 +33,25 @@ public class ClassScraper extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        // TODO handle intent and ?start service
         if (intent == null)
                 return;
 
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+
         String language = intent.getStringExtra("language");
-        Stack<ClassDescription> classes = new Stack();
+
+        if(dbHelper.needsUpdate(language))
+            return;
+
+        Stack<ClassDescription> classes = new Stack<>();
         switch(language){
             case "JAVA":
                 classes.addAll(javaScraper());
             default:
                 break;
         }
-        int count = classes.size();
+
+        dbHelper.insertValues(classes);
     }
 
     Stack<JavaClassDescription> javaScraper(){
@@ -72,7 +75,7 @@ public class ClassScraper extends IntentService {
                 }
 
                 JavaClassDescription javaClassDescription = new JavaClassDescription(packageNames[packageNames.length - 2], packageName.deleteCharAt(packageName.length() - 1).toString());
-                Log.d("wilson", packageNames[packageNames.length - 2] + ", " + packageName.deleteCharAt(packageName.length() - 1).toString());
+//                Log.d("wilson", packageNames[packageNames.length - 2] + ", " + packageName.deleteCharAt(packageName.length() - 1).toString());
             }
         } catch (IOException e) {
             e.printStackTrace();
