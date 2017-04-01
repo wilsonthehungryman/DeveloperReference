@@ -68,7 +68,8 @@ public class ClassScraper extends IntentService {
             for(Element div : divs){
                 Elements links = div.getElementsByTag("a");
                 for(Element link : links){
-                    languages.push(new LanguageDescription(link.data()));
+                    if(link.text() != null)
+                        languages.push(new LanguageDescription(link.text()));
                 }
             }
         } catch (IOException e) {

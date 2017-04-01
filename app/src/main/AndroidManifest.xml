@@ -28,7 +28,7 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".SelectLanguage"></activity>
+        <activity android:name=".SelectLanguage"/>
     </application>
 
 </manifest>

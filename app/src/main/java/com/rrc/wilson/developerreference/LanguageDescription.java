@@ -5,18 +5,19 @@ package com.rrc.wilson.developerreference;
  */
 
 class LanguageDescription {
-    String name;
-    int id;
-    String[] urls;
+    private String name;
+    private int id, supported;
+    private String[] urls;
 
-    public LanguageDescription(String name, int id, String[] urls) {
+    public LanguageDescription(String name, int id, String[] urls, int supported) {
         this.name = name;
         this.id = id;
         this.urls = urls;
+        this.supported = supported;
     }
 
     public LanguageDescription(String name) {
-        this(name, -1, null);
+        this(name, -1, null, 0);
     }
 
     public String getName() {

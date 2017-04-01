@@ -33,6 +33,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL_NAME = "class";
     private static final String COL_PACKAGE = "package";
 
+    private static final String SELECT_LANG = String.format("SELECT %1$s, %2$s, %3$s, %4$s FROM %5$s ",
+            "_id", COL_LANG, COL_SUPPORTED, COL_DOMAINS, LANG_TABLE);
+
     private static final String COL_URL = "url";
 
     private static final String LANG_TABLE_CREATE = String.format(
@@ -226,18 +229,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return results;
     }
 
-    public ArrayList<String> getLanguages(){
+    public ArrayList<LanguageDescription> getLanguages(){
         SQLiteDatabase db = getReadableDatabase();
         ArrayList<String> languages = new ArrayList<>();
         Cursor c = db.rawQuery("SELECT " + COL_LANG + " FROM " + LANG_TABLE, null);
+
+        return generateLanguageList(c);
+    }
+
+    public ArrayList<LanguageDescription> getSupportedLanguages(){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT " + COL_LANG + " FROM " + LANG_TABLE + " WHERE " + COL_SUPPORTED + " != 0", null);
+
+        return generateLanguageList(c);
+    }
+
+    private ArrayList<LanguageDescription> generateLanguageList(Cursor c){
+        ArrayList<LanguageDescription> languages = new ArrayList<>();
         if(!c.moveToFirst()){
             c.close();
             return null;
         }
+
+        int name = c.getColumnIndex(COL_LANG);
+        int id = c.getColumnIndex("_id");
+        int urls = c.getColumnIndex(COL_DOMAINS);
+        int supported = c.getColumnIndex(COL_SUPPORTED);
+
         do{
-            languages.add(c.getString(0));
+            languages.add(new LanguageDescription(c.getString(name),
+                                                    c.getInt(id),
+                                                    c.getString(urls).split(":"),
+                                                    c.getInt(supported)));
         }while(c.moveToNext());
         c.close();
+
         return languages;
     }
 
@@ -246,24 +272,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertLanguages(AbstractList<LanguageDescription> langs){
-        ArrayList<String> tableLangs = getLanguages();
-
         SQLiteDatabase db = getWritableDatabase();
 
         db.beginTransaction();
 
         try {
             for(LanguageDescription lang : langs){
-                if(!tableLangs.contains(lang.getName())){
+                if(!languageExists(lang.getName(), db)){
                     ContentValues vals = new ContentValues();
                     vals.put(COL_LANG, lang.getName());
+                    vals.put(COL_SUPPORTED, 0);
                     db.insert(LANG_TABLE, null, vals);
                 }
             }
+            db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
             db.close();
         }
+    }
+
+    public boolean languageExists(String lang){
+        SQLiteDatabase db = getReadableDatabase();
+        boolean result = languageExists(lang, db);
+        db.close();
+        return result;
+    }
+
+    private boolean languageExists(String lang, SQLiteDatabase db){
+        Cursor c = db.rawQuery(SELECT_LANG + " WHERE " + COL_LANG + " = ?", new String[]{lang});
+        boolean result = false;
+        if(c.getCount() > 0)
+            result = true;
+
+        c.close();
+        return result;
     }
 
     private String generateInClause(String[] items, String col){
