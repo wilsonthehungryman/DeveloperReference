@@ -15,6 +15,9 @@ public class MainMenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        startClassScraper();
+
         View sView = findViewById(R.id.scrollView);
         LinearLayout layout = (LinearLayout)findViewById(R.id.menuLayout);
 
@@ -32,11 +35,12 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void processClick(View v){
+        Intent intent = new Intent(this, SelectLanguage.class);
         switch(v.getId()){
             case R.id.searchAll:
                 break;
             case R.id.searchOfficial:
-                startClassScraper();
+                intent.putExtra("source", R.id.searchOfficial);
                 break;
             case R.id.searchForum:
             case R.id.searchGuide:
@@ -45,11 +49,13 @@ public class MainMenuActivity extends AppCompatActivity {
                 Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT);
                 break;
         }
+        startActivity(intent);
     }
 
     private void startClassScraper(){
         Intent intent = new Intent(this, ClassScraper.class);
-        intent.putExtra("language", "JAVA");
+        intent.putExtra("language", "ALL");
+        intent.putExtra("langTable", true);
         startService(intent);
     }
 }
