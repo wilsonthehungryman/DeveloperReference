@@ -11,12 +11,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import java.util.Stack;
 
 /**
@@ -38,26 +32,57 @@ public class ClassScraper extends IntentService {
 
         DatabaseHelper dbHelper = new DatabaseHelper(this);
 
+        boolean updateLangTable = intent.getBooleanExtra("langTable", false);
         String language = intent.getStringExtra("language");
 
-        if(dbHelper.needsUpdate(language))
-            return;
+        if(updateLangTable){
+            Stack<LanguageDescription> languages = languageScraper();
+            dbHelper.insertLanguages(languages);
+        }
 
         Stack<ClassDescription> classes = new Stack<>();
         switch(language){
             case "JAVA":
-                classes.addAll(javaScraper());
-            default:
+                if(dbHelper.needsUpdate(language))
+                    classes.addAll(javaScraper());
                 break;
+            case "ALL":
+                //if(dbHelper.needsUpdate("JAVA"))
+                    classes.addAll(javaScraper());
+                break;
+            default:
+                return;
         }
 
-        dbHelper.insertValues(classes);
+        dbHelper.insertClasses(classes);
+    }
+
+    Stack<LanguageDescription> languageScraper(){
+        Log.d("wilson", "In languageScraper");
+        Stack<LanguageDescription> languages = new Stack<>();
+
+        try {
+            Document doc = Jsoup.connect("https://en.wikipedia.org/wiki/List_of_programming_languages").get();
+            Log.d("wilson", "got doc");
+            Elements divs = doc.select("div.div-col.columns.column-count");
+            for(Element div : divs){
+                Elements links = div.getElementsByTag("a");
+                for(Element link : links){
+                    languages.push(new LanguageDescription(link.data()));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return languages;
     }
 
     Stack<JavaClassDescription> javaScraper(){
         Log.d("wilson", "In java scraper");
-        Stack<JavaClassDescription> classes;
-        classes = new Stack<>();
+        Stack<JavaClassDescription> classes = new Stack<>();
 
         try {
             Document doc = Jsoup.connect("http://docs.oracle.com/javase/7/docs/api/allclasses-noframe.html").get();
