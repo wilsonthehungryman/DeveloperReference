@@ -6,10 +6,16 @@ package com.rrc.wilson.developerreference;
 
 public abstract class ClassDescription {
     protected String className, language;
+    protected String[] urls;
 
     public ClassDescription(String className, String language) {
+        this(className, language, null);
+    }
+
+    public ClassDescription(String className, String language, String[] urls) {
         this.className = className;
         this.language = language;
+        this.urls = urls;
     }
 
     public String getClassName() {
@@ -26,5 +32,13 @@ public abstract class ClassDescription {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String[] getUrls() {
+        return urls;
+    }
+
+    public void setUrls(String[] urls) {
+        this.urls = urls;
     }
 }
