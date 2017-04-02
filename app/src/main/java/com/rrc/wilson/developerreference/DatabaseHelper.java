@@ -27,16 +27,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL_LANG = "language";
     private static final String COL_UPDATED = "updated";
     private static final String COL_SUPPORTED = "supported";
-
     private static final String COL_DOMAINS = "domains";
+
     private static final String COL_LANG_FK = "language_id";
     private static final String COL_NAME = "class";
     private static final String COL_PACKAGE = "package";
+    private static final String COL_URL = "url";
 
     private static final String SELECT_LANG = String.format("SELECT %1$s, %2$s, %3$s, %4$s FROM %5$s ",
             "_id", COL_LANG, COL_SUPPORTED, COL_DOMAINS, LANG_TABLE);
 
-    private static final String COL_URL = "url";
+    private static final String SELECT_CLASS = String.format("SELECT %1$s, %2$s, %3$s, %4$s, %5$s FROM %6$s ",
+            "_id", COL_NAME, COL_URL, COL_PACKAGE, COL_LANG_FK, CLASS_TABLE);
 
     private static final String LANG_TABLE_CREATE = String.format(
             "CREATE TABLE IF NOT EXISTS %1$s (" +
@@ -137,16 +139,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Stack<ClassDescription> get(String lang){
         Stack<ClassDescription> classes = new Stack<>();
-
+        lang = lang.toUpperCase();
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] cols;
-        if(lang.equals("JAVA")){
-            cols = new String[]{ COL_LANG_FK, COL_NAME, COL_URL, COL_PACKAGE };
-        }else{
-            cols = new String[]{ COL_LANG_FK, COL_NAME, COL_URL };
-        }
-        String[] selectionParams = { COL_LANG_FK, String.valueOf(getLangId(lang)) };
-        Cursor c = db.query(false, CLASS_TABLE, cols, "WHERE ? = ?", selectionParams, null, null, COL_NAME, null);
+
+        Cursor c = db.rawQuery(SELECT_CLASS + "WHERE " + COL_LANG_FK + " = ?", new String[]{String.valueOf(getLangId(lang))});
 
         if(!c.moveToFirst())
             classes = null;
