@@ -9,30 +9,30 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/customQuery"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp" />
-        <SearchView
-            android:id="@+id/customQuery"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:layout_gravity="center"
-            android:inputType="text" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/customQuery"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp" />
+    <SearchView
+        android:id="@+id/customQuery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_gravity="center"
+        android:inputType="text" />
 
-        <Button android:id="@+id/customGo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/customGo"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/orChoosePrebuiltQuery"
-            android:layout_gravity="center" />
+    <Button android:id="@+id/customGo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/customGo"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/orChoosePrebuiltQuery"
+        android:layout_gravity="center" />
     <LinearLayout android:id="@+id/items"
         android:orientation="vertical"
         android:layout_width="match_parent"
