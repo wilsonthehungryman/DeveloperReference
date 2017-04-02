@@ -74,7 +74,6 @@ public class ClassScraper extends IntentService {
 
         try {
             Document doc = Jsoup.connect("https://en.wikipedia.org/wiki/List_of_programming_languages").get();
-            Log.d("wilson", "got doc");
             Elements divs = doc.select("div.div-col.columns.column-count");
             for(Element div : divs){
                 Elements links = div.getElementsByTag("a");
@@ -98,9 +97,7 @@ public class ClassScraper extends IntentService {
 
         try {
             Document doc = Jsoup.connect("http://docs.oracle.com/javase/7/docs/api/allclasses-noframe.html").get();
-            Log.d("wilson", "got doc");
             Elements links = doc.getElementsByTag("a");
-            Log.d("wilson", "got links: " + links.size());
 
             for(Element link : links){
                 String[] packageNames = link.attr("href").split("/|\\.");
@@ -111,7 +108,7 @@ public class ClassScraper extends IntentService {
                     packageName.append('.');
                 }
 
-                classes.push(new JavaClassDescription(packageNames[packageNames.length - 2], packageName.deleteCharAt(packageName.length() - 1).toString()));
+                classes.push(new JavaClassDescription(packageNames[packageNames.length - 2], packageName.deleteCharAt(packageName.length() - 1).toString(), generateJavaUrls(packageName.toString(), packageNames[packageNames.length - 2])));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -120,5 +117,9 @@ public class ClassScraper extends IntentService {
         }
 
         return classes;
+    }
+
+    private String[] generateJavaUrls(String packageName, String className){
+        return new String[]{"http://docs.oracle.com/javase/7/docs/api/" + packageName.replaceAll("\\.", "/") + className + ".html"};
     }
 }
