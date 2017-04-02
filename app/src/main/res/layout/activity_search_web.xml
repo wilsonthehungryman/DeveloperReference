@@ -16,7 +16,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="5dp" />
     <SearchView
-        android:id="@+id/customQuery"
+        android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"

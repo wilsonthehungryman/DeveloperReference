@@ -3,11 +3,14 @@ package com.rrc.wilson.developerreference;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class SearchWebActivity extends AppCompatActivity {
 
@@ -39,7 +42,8 @@ public class SearchWebActivity extends AppCompatActivity {
             }
         });
 
-        populateClasses();
+        if(populateClasses())
+            generateTextViews();
     }
 
     public void processCustomQuery(){
@@ -47,7 +51,26 @@ public class SearchWebActivity extends AppCompatActivity {
     }
 
 
-    private void populateClasses(){
-        
+    private boolean populateClasses(){
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        classes = new ArrayList<>();
+        try {
+            for(String lang : languages){
+                classes.addAll(dbHelper.get(lang));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    private void generateTextViews(){
+        for(ClassDescription c : classes){
+            TextView v = new TextView(this);
+            v.setText(String.format("(%1$s) %2$s", c.getLanguage(), c.getClassName()));
+            v.setGravity(Gravity.CENTER);
+            mItems.addView(v);
+        }
     }
 }
