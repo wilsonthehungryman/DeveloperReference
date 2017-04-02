@@ -36,15 +36,18 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private void processClick(View v){
         Intent intent = new Intent(this, SelectLanguage.class);
+        boolean startNextActivity = false;
         switch(v.getId()){
             case R.id.searchAll:
                 break;
             case R.id.searchOfficial:
                 intent.putExtra("source", R.id.searchOfficial);
+                startNextActivity = true;
                 break;
             case R.id.allLanguages:
                 intent.putExtra("source", R.id.allLanguages);
                 intent.putExtra("allLanguages", true);
+                startNextActivity = true;
                 break;
             case R.id.searchForum:
             case R.id.searchGuide:
@@ -53,7 +56,8 @@ public class MainMenuActivity extends AppCompatActivity {
                 Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT);
                 break;
         }
-        startActivity(intent);
+        if(startNextActivity)
+            startActivity(intent);
     }
 
     private void startClassScraper(){
