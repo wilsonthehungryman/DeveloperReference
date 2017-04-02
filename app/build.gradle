@@ -25,7 +25,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     // jsoup HTML parser library @ http://jsoup.org/
-    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
     compile 'org.jsoup:jsoup:1.10.2'
     compile 'joda-time:joda-time:2.9.9'

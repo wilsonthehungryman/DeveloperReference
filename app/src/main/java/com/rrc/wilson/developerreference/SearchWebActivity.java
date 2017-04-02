@@ -3,7 +3,10 @@ package com.rrc.wilson.developerreference;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -24,6 +27,10 @@ public class SearchWebActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_web);
+        Toolbar tbar = (Toolbar)findViewById(R.id.toolbar);
+//        tbar.setMenu();
+        setSupportActionBar(tbar);
+
 
         Intent intent = getIntent();
         languages = intent.getStringArrayListExtra("languages");
@@ -72,5 +79,12 @@ public class SearchWebActivity extends AppCompatActivity {
             v.setGravity(Gravity.CENTER);
             mItems.addView(v);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater m = getMenuInflater();
+        m.inflate(R.menu.menu, menu);
+        return true;
     }
 }
