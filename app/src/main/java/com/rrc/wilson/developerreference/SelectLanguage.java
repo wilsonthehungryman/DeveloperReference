@@ -11,9 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
-public class SelectLanguage extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class SelectLanguage extends AppCompatActivity {
 
     LinearLayout mLayout;
     ArrayList<LanguageDescription> languages;
@@ -35,9 +34,10 @@ public class SelectLanguage extends AppCompatActivity implements SearchView.OnQu
 
         mLayout = (LinearLayout) findViewById(R.id.items);
         search = (SearchView)findViewById(R.id.search);
+        Search searcher = new Search(mLayout);
 
         try {
-            search.setOnQueryTextListener(this);
+            search.setOnQueryTextListener(searcher);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -73,21 +73,5 @@ public class SelectLanguage extends AppCompatActivity implements SearchView.OnQu
         }
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String s) {
-        return onQueryTextChange(s);
-    }
 
-    @Override
-    public boolean onQueryTextChange(String s) {
-        s = s.replaceAll("\\s", "").replaceAll("\\+", "\\+").toUpperCase();
-        for(int i = 0; i < mLayout.getChildCount(); i++){
-            View v = mLayout.getChildAt(i);
-            if(((TextView)v).getText().toString().replaceAll("\\s", "").toUpperCase().contains(s))
-                v.setVisibility(View.VISIBLE);
-            else
-                v.setVisibility(View.GONE);
-        }
-        return false;
-    }
 }
