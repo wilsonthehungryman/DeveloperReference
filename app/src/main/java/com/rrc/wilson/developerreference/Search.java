@@ -23,11 +23,27 @@ public class Search implements SearchView.OnQueryTextListener {
     @Override
     public boolean onQueryTextChange(String s) {
         s = s.replaceAll("\\s", "").replaceAll("\\+", "\\+").toUpperCase();
+        int lastMove = 0;
+        boolean exactMatch = false;
         for(int i = 0; i < mLayout.getChildCount(); i++){
             View v = mLayout.getChildAt(i);
-            if(((TextView)v).getText().toString().replaceAll("\\s", "").toUpperCase().contains(s))
+            String text = ((TextView)v).getText().toString().replaceAll("\\s|^\\(.*\\)", "").toUpperCase();
+            if(text.contains(s)) {
                 v.setVisibility(View.VISIBLE);
-            else
+                if(text.equals(s)){
+                    mLayout.removeView(v);
+                    mLayout.addView(v, 0);
+                    exactMatch = true;
+                }else if (text.substring(0, s.length()).equals(s)) {
+                    mLayout.removeView(v);
+                    mLayout.addView(v, (exactMatch) ? 1 : 0);
+                    lastMove++;
+                }else if(text.length() == s.length() -1){
+                    mLayout.removeView(v);
+                    mLayout.addView(v, lastMove);
+                }
+
+            }else
                 v.setVisibility(View.GONE);
         }
         return false;
