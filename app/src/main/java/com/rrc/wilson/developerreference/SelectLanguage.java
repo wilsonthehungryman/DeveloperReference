@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class SelectLanguage extends AppCompatActivity {
@@ -18,6 +19,7 @@ public class SelectLanguage extends AppCompatActivity {
     ArrayList<LanguageDescription> languages;
     DatabaseHelper dbHelper;
     SearchView search;
+    int source;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +44,30 @@ public class SelectLanguage extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if(intent.getIntExtra("source", 0) == R.id.searchOfficial) {
+        source = intent.getIntExtra("source", 0);
+
+        if(source == R.id.searchOfficial) {
             generateCheckboxes();
-        }else if(intent.getIntExtra("source", 0) == R.id.allLanguages){
+        }else if(source == R.id.allLanguages){
             generateLabels();
         }
     }
 
     private void generateCheckboxes(){
         if(languages == null || languages.size() == 0)
+            // TODO start service, with prompt
             return;
+
+        findViewById(R.id.go).setVisibility(View.VISIBLE);
+
+        findViewById(R.id.tvSelectLanguage).setVisibility(View.VISIBLE);
+
+        findViewById(R.id.go).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processGo();
+            }
+        });
 
         for(LanguageDescription lang : languages){
             CheckBox chkBox = new CheckBox(this);
@@ -73,5 +89,34 @@ public class SelectLanguage extends AppCompatActivity {
         }
     }
 
+    private void processGo(){
+        ArrayList<String> languages = getSelectedLanguages();
+        if(languages.size() == 0)
+            // TODO no language selected logic
+            return;
 
+        Intent intent = null;
+        switch(source){
+            case R.id.searchOfficial:
+                intent = new Intent(this, SearchWebActivity.class);
+                break;
+        }
+
+        if(intent == null)
+            return;
+
+        intent.putExtra("source", source);
+        intent.putExtra("languages", languages);
+        startActivity(intent);
+    }
+
+    private ArrayList<String> getSelectedLanguages(){
+        ArrayList<String> languages = new ArrayList<>();
+        for(int i = 0; i < mLayout.getChildCount(); i++){
+            CheckBox c = (CheckBox)mLayout.getChildAt(i);
+            if(c.isChecked())
+                languages.add(c.getText().toString());
+        }
+        return languages;
+    }
 }
