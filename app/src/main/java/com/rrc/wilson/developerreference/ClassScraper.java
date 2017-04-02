@@ -58,7 +58,7 @@ public class ClassScraper extends IntentService {
                     classes.addAll(javaScraper());
                 break;
             case "ALL":
-                //if(dbHelper.needsUpdate("JAVA"))
+                if(dbHelper.needsUpdate("JAVA"))
                     classes.addAll(javaScraper());
                 break;
             default:

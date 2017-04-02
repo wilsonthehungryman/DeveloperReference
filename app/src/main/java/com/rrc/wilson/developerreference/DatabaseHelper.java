@@ -79,13 +79,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    private void performClassInsert(SQLiteDatabase db, String language, String className, String packageName, String url){
+    private void performClassInsert(SQLiteDatabase db, String language, String className, String packageName, String urls){
         ContentValues content = new ContentValues();
 
         content.put(COL_LANG_FK, getLangId(language));
         content.put(COL_NAME, className);
         content.put(COL_PACKAGE, packageName);
-        content.put(COL_URL, url);
+        content.put(COL_URL, urls);
 
         db.insert(CLASS_TABLE, null, content);
     }
@@ -112,25 +112,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             while(iter.hasNext()){
                 ClassDescription classDescription = iter.next();
                 String lang = classDescription.getLanguage();
-                ContentValues content = new ContentValues();
-
-                content.put(COL_LANG_FK, getLangId(lang));
-                content.put(COL_NAME, classDescription.getClassName());
-                content.put(COL_URL, formatUrls(classDescription.getUrls()));
-                switch (lang){
+                String packageName = null;
+                switch (lang.toUpperCase()){
                     case "JAVA":
-                        content.put(COL_PACKAGE, ((JavaClassDescription)classDescription).getPackageName());
+                        packageName = ((JavaClassDescription)classDescription).getPackageName();
                         java = true;
                         break;
                 }
-                db.insert(CLASS_TABLE, null, content);
+                performClassInsert(db, lang, classDescription.getClassName(), packageName, formatUrls(classDescription.getUrls()));
             }
             if(java){
                 ContentValues vals = new ContentValues();
                 vals.put(COL_UPDATED, System.currentTimeMillis());
                 vals.put(COL_SUPPORTED, 1);
                 vals.put(COL_DOMAINS, "docs.oracle.com:");
-                db.update(LANG_TABLE, vals, COL_LANG + " = ?", new String[]{"JAVA"});
+                db.update(LANG_TABLE, vals, COL_LANG + " = ? COLLATE NOCASE", new String[]{"Java"});
             }
             db.setTransactionSuccessful();
         } finally {
@@ -173,10 +169,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean needsUpdate(String lang){
         SQLiteDatabase db = getReadableDatabase();
         boolean flag = true;
-        Cursor c = db.rawQuery("SELECT " + COL_UPDATED + " FROM " + LANG_TABLE + " WHERE " + COL_LANG + " = '" + lang.toUpperCase() + "'", null);
+        Cursor c = db.rawQuery("SELECT " + COL_UPDATED + " FROM " + LANG_TABLE + " WHERE " + COL_LANG + " = ? COLLATE NOCASE", new String[]{lang});
         if(c.moveToFirst()){
             Long updated = c.getLong(0);
-            if(updated == null){
+            if(updated == 0){
                 flag = true;
 
             }
@@ -201,10 +197,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public int getLangId(String lang){
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT _id FROM " + LANG_TABLE + " WHERE " + COL_LANG + " = ?", new String[]{lang});
+        Cursor c = db.rawQuery("SELECT _id FROM " + LANG_TABLE + " WHERE " + COL_LANG + " = ? COLLATE NOCASE", new String[]{lang});
         if(!c.moveToFirst())
             return -1;
-        return c.getInt(c.getInt(0));
+        int id = c.getInt(c.getColumnIndex("_id"));
+        c.close();
+        return id;
     }
 
     public HashMap<String, Integer> getLangIds(String[] langs){
@@ -329,6 +327,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private String formatUrls(String[] urls){
+        if(urls == null)
+            return null;
+
         StringBuilder s = new StringBuilder();
         for(String url : urls) {
             s.append(url);
