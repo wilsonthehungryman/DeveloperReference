@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.rrc.wilson.developerreference.MainMenuActivity">
-
+    <include android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
     <TextView
         android:id="@+id/searchAll"
         android:layout_width="match_parent"

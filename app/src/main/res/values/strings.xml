@@ -15,6 +15,8 @@
     <string name="orChoosePrebuiltQuery">Or Choose a Topic:</string>
     <string name="customGo">Go (custom)</string>
     <string name="prebuiltGo">Go (selection)</string>
+    <!-- Settings -->
+    <string name="forceRefresh">Refresh all data in db</string>
     <!-- Common -->
     <string name="SelectLang">Select one or more languages</string>
     <string name="Go">Go</string>

@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -28,7 +29,6 @@ public class SearchWebActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_web);
         Toolbar tbar = (Toolbar)findViewById(R.id.toolbar);
-//        tbar.setMenu();
         setSupportActionBar(tbar);
 
 
@@ -85,6 +85,17 @@ public class SearchWebActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater m = getMenuInflater();
         m.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
+        }
         return true;
     }
 }

@@ -3,7 +3,11 @@ package com.rrc.wilson.developerreference;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,11 +22,14 @@ public class MainMenuActivity extends AppCompatActivity {
 
         startClassScraper();
 
+        Toolbar tbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(tbar);
+
         View sView = findViewById(R.id.scrollView);
         LinearLayout layout = (LinearLayout)findViewById(R.id.menuLayout);
 
         //iter
-        for(int i = 0; i < layout.getChildCount(); i++){
+        for(int i = 1; i < layout.getChildCount(); i++){
             TextView textView = (TextView)layout.getChildAt(i);
             textView.setGravity(Gravity.CENTER);
             textView.setOnClickListener(new View.OnClickListener() {
@@ -65,5 +72,23 @@ public class MainMenuActivity extends AppCompatActivity {
         intent.putExtra("language", "ALL");
         intent.putExtra("langTable", true);
         startService(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater m = getMenuInflater();
+        m.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return true;
     }
 }

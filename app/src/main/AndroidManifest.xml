@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainMenuActivity">
+        <activity android:name=".MainMenuActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +29,8 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".SelectLanguage"/>
+        <activity android:name=".SelectLanguage" />
+        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>
