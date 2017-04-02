@@ -9,12 +9,21 @@
     android:orientation="vertical"
     tools:context="com.rrc.wilson.developerreference.SelectLanguage">
 
+    <SearchView android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <TextView
         android:id="@+id/tvSelectLanguage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/SelectLang" />
+
+    <LinearLayout android:id="@+id/items"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/go"
@@ -23,5 +32,7 @@
         android:gravity="center"
         android:text="@string/Go"
         android:visibility="gone"/>
+
+
 </LinearLayout>
 </ScrollView>
