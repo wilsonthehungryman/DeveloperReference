@@ -231,15 +231,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public ArrayList<LanguageDescription> getLanguages(){
         SQLiteDatabase db = getReadableDatabase();
-        ArrayList<String> languages = new ArrayList<>();
-        Cursor c = db.rawQuery("SELECT " + COL_LANG + " FROM " + LANG_TABLE, null);
+        Cursor c = db.rawQuery(SELECT_LANG, null);
 
         return generateLanguageList(c);
     }
 
     public ArrayList<LanguageDescription> getSupportedLanguages(){
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT " + COL_LANG + " FROM " + LANG_TABLE + " WHERE " + COL_SUPPORTED + " != 0", null);
+        Cursor c = db.rawQuery(SELECT_LANG + " WHERE " + COL_SUPPORTED + " != 0", null);
 
         return generateLanguageList(c);
     }
@@ -259,7 +258,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         do{
             languages.add(new LanguageDescription(c.getString(name),
                                                     c.getInt(id),
-                                                    c.getString(urls).split(":"),
+                                                    (c.getString(urls) == null) ? null : c.getString(urls).split(":"),
                                                     c.getInt(supported)));
         }while(c.moveToNext());
         c.close();

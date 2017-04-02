@@ -42,6 +42,10 @@ public class MainMenuActivity extends AppCompatActivity {
             case R.id.searchOfficial:
                 intent.putExtra("source", R.id.searchOfficial);
                 break;
+            case R.id.allLanguages:
+                intent.putExtra("source", R.id.allLanguages);
+                intent.putExtra("allLanguages", true);
+                break;
             case R.id.searchForum:
             case R.id.searchGuide:
             case R.id.searchCodeExamples:

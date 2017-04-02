@@ -8,6 +8,7 @@
     <string name="searchGuide">Search For a Guide/Tutorial</string>
     <string name="searchCodeExamples">Search for Code Samples</string>
     <string name="compare">Compare Differences Between Languages</string>
+    <string name="allLanguages">View a List of All Languages</string>
     <!-- SearchWeb -->
     <string name="customQuery">Enter a Custom Search Query:</string>
     <string name="choosePrebuiltQuery">Choose a Topic:</string>
