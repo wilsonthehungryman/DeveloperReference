@@ -52,13 +52,14 @@ public class ClassScraper extends IntentService {
         }
 
         Stack<ClassDescription> classes = new Stack<>();
+        boolean force = intent.getBooleanExtra("classTableForce", false);
         switch(language){
             case "JAVA":
                 if(dbHelper.needsUpdate(language))
                     classes.addAll(javaScraper());
                 break;
             case "ALL":
-                if(dbHelper.needsUpdate("JAVA"))
+                if(force || dbHelper.needsUpdate("JAVA"))
                     classes.addAll(javaScraper());
                 break;
             default:
