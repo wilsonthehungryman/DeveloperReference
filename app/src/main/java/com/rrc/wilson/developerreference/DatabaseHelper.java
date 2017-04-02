@@ -153,19 +153,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = db.query(false, CLASS_TABLE, cols, "WHERE ? = ?", selectionParams, null, null, COL_NAME, null);
 
         if(!c.moveToFirst())
-            return null;
-
-        int col_name = c.getColumnIndex(COL_NAME);
-        int col_urls = c.getColumnIndex(COL_URL);
-        if(lang.equals("JAVA")){
-            int col_package = c.getColumnIndex(COL_PACKAGE);
-            do{
-                classes.push(new JavaClassDescription(c.getString(col_name), c.getString(col_package), c.getString(col_urls).split(":")));
-            }while(c.moveToNext());
-        }else{
-            return null;
+            classes = null;
+        else {
+            int col_name = c.getColumnIndex(COL_NAME);
+            int col_urls = c.getColumnIndex(COL_URL);
+            if (lang.equals("JAVA")) {
+                int col_package = c.getColumnIndex(COL_PACKAGE);
+                do {
+                    classes.push(new JavaClassDescription(c.getString(col_name), c.getString(col_package), splitUrls(c.getString(col_urls))));
+                } while (c.moveToNext());
+            } else
+                classes = null;
         }
 
+        c.close();
         return classes;
     }
 
@@ -181,11 +182,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
             Long today = System.currentTimeMillis();
             Long difference = today - updated;
-            if(!(difference / 1000 > 60 * 24 * 14))
+            if(!TimeManager.updateClass(updated, today))
                 flag = false;
         }else
             flag = true;
 
+        c.close();
         db.close();
 
         db = getWritableDatabase();
@@ -199,7 +201,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public int getLangId(String lang){
         SQLiteDatabase db = getReadableDatabase();
-        Cursor c = db.rawQuery("SELECT _id FROM " + LANG_TABLE + " WHERE " + COL_LANG + " = " + lang, null);
+        Cursor c = db.rawQuery("SELECT _id FROM " + LANG_TABLE + " WHERE " + COL_LANG + " = ?", new String[]{lang});
         if(!c.moveToFirst())
             return -1;
         return c.getInt(c.getInt(0));
@@ -258,7 +260,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         do{
             languages.add(new LanguageDescription(c.getString(name),
                                                     c.getInt(id),
-                                                    (c.getString(urls) == null) ? null : c.getString(urls).split(":"),
+                                                    splitUrls(c.getString(urls)),
                                                     c.getInt(supported)));
         }while(c.moveToNext());
         c.close();
@@ -270,14 +272,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return getLangIds(null);
     }
 
-    public void insertLanguages(AbstractList<LanguageDescription> langs){
+    public boolean insertLanguages(AbstractList<LanguageDescription> langs) {
         SQLiteDatabase db = getWritableDatabase();
-
+        boolean flag = false;
         db.beginTransaction();
 
         try {
-            for(LanguageDescription lang : langs){
-                if(!languageExists(lang.getName(), db)){
+            for (LanguageDescription lang : langs) {
+                if (!languageExists(lang.getName(), db)) {
                     ContentValues vals = new ContentValues();
                     vals.put(COL_LANG, lang.getName());
                     vals.put(COL_SUPPORTED, 0);
@@ -285,10 +287,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
             }
             db.setTransactionSuccessful();
-        } finally {
+            flag = true;
+        }catch (Exception e){
+            e.printStackTrace();
+            flag = false;
+        }finally {
             db.endTransaction();
             db.close();
         }
+
+        return flag;
     }
 
     public boolean languageExists(String lang){
@@ -327,5 +335,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             s.append(":");
         }
         return s.toString();
+    }
+
+    private String[] splitUrls(String urls){
+        if(urls == null)
+            return null;
+        else
+            return urls.split(":");
     }
 }

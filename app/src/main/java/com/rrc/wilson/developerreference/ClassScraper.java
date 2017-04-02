@@ -2,6 +2,7 @@ package com.rrc.wilson.developerreference;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -36,8 +37,18 @@ public class ClassScraper extends IntentService {
         String language = intent.getStringExtra("language");
 
         if(updateLangTable){
-            Stack<LanguageDescription> languages = languageScraper();
-            dbHelper.insertLanguages(languages);
+            SharedPreferences prefs = getSharedPreferences("DeveloperReference", MODE_PRIVATE);
+            Long lastUpdate = prefs.getLong("languageLastUpdate", 0);
+            if(intent.getBooleanExtra("langTableForce", false) || TimeManager.updateLanguage(lastUpdate, System.currentTimeMillis())) {
+                Stack<LanguageDescription> languages = languageScraper();
+                if(dbHelper.insertLanguages(languages)){
+                    SharedPreferences.Editor e = prefs.edit();
+                    e.putLong("languageLastUpdate", System.currentTimeMillis());
+                    e.apply();
+                }
+
+            }
+
         }
 
         Stack<ClassDescription> classes = new Stack<>();
@@ -100,8 +111,7 @@ public class ClassScraper extends IntentService {
                     packageName.append('.');
                 }
 
-                JavaClassDescription javaClassDescription = new JavaClassDescription(packageNames[packageNames.length - 2], packageName.deleteCharAt(packageName.length() - 1).toString());
-//                Log.d("wilson", packageNames[packageNames.length - 2] + ", " + packageName.deleteCharAt(packageName.length() - 1).toString());
+                classes.push(new JavaClassDescription(packageNames[packageNames.length - 2], packageName.deleteCharAt(packageName.length() - 1).toString()));
             }
         } catch (IOException e) {
             e.printStackTrace();
