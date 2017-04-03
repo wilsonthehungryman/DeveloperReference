@@ -20,4 +20,5 @@
     <!-- Common -->
     <string name="SelectLang">Select one or more languages</string>
     <string name="Go">Go</string>
+    <string name="placeholder">Placeholder</string>
 </resources>

@@ -51,7 +51,6 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
 //        search.setOnQueryTextListener(searcher);
 
         search.setOnQueryTextListener(this);
-
         findViewById(R.id.customGo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,23 +75,28 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
     @Override
     public boolean onQueryTextChange(String s) {
         Log.d("wilson", "Starting onQueryTextChange s:" + s);
-        s = s.replaceAll("\\s", "").replaceAll("\\+", "\\+").toUpperCase();
-        for(int i = 0; i < mItems.getChildCount() && s.length() > 2; i++){
-            View v = mItems.getChildAt(i);
-            if(!(s.length() == 0)) {
-                //.replaceAll("\\s|^\\(.*\\)", "")
-                String text = ((TextView) v).getText().toString().toUpperCase();
-                if (text.contains(s)) {
-                    v.setVisibility(View.VISIBLE);
-                    if (text.equals(s)) {
-                        mItems.removeView(v);
-                        mItems.addView(v, 0);
-                    }
+        if(s == null || s.length() == 0){
+            for (int i = 0; i < mItems.getChildCount() && s.length() > 2; i++)
+                mItems.getChildAt(i).setVisibility(View.VISIBLE);
+        }else {
+            s = s.replaceAll("\\s", "").replaceAll("\\+", "\\+").toUpperCase();
+            for (int i = 0; i < mItems.getChildCount() && s.length() > 2; i++) {
+                View v = mItems.getChildAt(i);
+                if (!(s.length() == 0)) {
+                    //.replaceAll("\\s|^\\(.*\\)", "")
+                    String text = ((TextView) v).getText().toString().toUpperCase();
+                    if (text.contains(s)) {
+                        v.setVisibility(View.VISIBLE);
+                        if (text.equals(s)) {
+                            mItems.removeView(v);
+                            mItems.addView(v, 0);
+                        }
 
+                    } else
+                        v.setVisibility(View.GONE);
                 } else
-                    v.setVisibility(View.GONE);
-            }else
-                v.setVisibility(View.VISIBLE);
+                    v.setVisibility(View.VISIBLE);
+            }
         }
         Log.d("wilson", "Leaving onQueryTextChange s:" + s);
 
