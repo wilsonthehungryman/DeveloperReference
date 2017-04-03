@@ -36,6 +36,9 @@
         android:layout_height="wrap_content"
         android:text="@string/orChoosePrebuiltQuery"
         android:layout_gravity="center" />
+    <!--<ListView android:id="@+id/items"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
     <LinearLayout android:id="@+id/items"
         android:orientation="vertical"
         android:layout_width="match_parent"
