@@ -101,7 +101,8 @@ public class ClassScraper extends IntentService {
             Elements links = doc.getElementsByTag("a");
 
             for(Element link : links){
-                String[] packageNames = link.attr("href").split("/|\\.");
+                String partialPath = link.attr("href");
+                String[] packageNames = partialPath.split("/|\\.");
 
                 StringBuilder packageName = new StringBuilder();
                 for(int i = 0; i < packageNames.length - 2; i++){
@@ -109,7 +110,7 @@ public class ClassScraper extends IntentService {
                     packageName.append('.');
                 }
 
-                classes.push(new JavaClassDescription(packageNames[packageNames.length - 2], packageName.deleteCharAt(packageName.length() - 1).toString(), generateJavaUrls(packageName.toString(), packageNames[packageNames.length - 2])));
+                classes.push(new JavaClassDescription(packageNames[packageNames.length - 2], packageName.deleteCharAt(packageName.length() - 1).toString(), generateJavaUrls(partialPath)));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -120,7 +121,7 @@ public class ClassScraper extends IntentService {
         return classes;
     }
 
-    private String[] generateJavaUrls(String packageName, String className){
-        return new String[]{"http://docs.oracle.com/javase/7/docs/api/" + packageName.replaceAll("\\.", "/") + className + ".html"};
+    private String[] generateJavaUrls(String partialPath){
+        return new String[]{ "http://docs.oracle.com/javase/7/docs/api/" + partialPath };
     }
 }
