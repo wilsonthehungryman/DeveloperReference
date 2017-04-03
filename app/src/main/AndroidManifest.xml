@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".MainMenuActivity"
+        <activity
+            android:name=".MainMenuActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +23,14 @@
         <activity
             android:name=".SearchWebActivity"
             android:label="@string/title_activity_search_web"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name=".SearchWebActivity"
+                android:resource="@xml/searchable"/>
+
+        </activity>
 
         <service
             android:name=".ClassScraper"
@@ -30,7 +38,8 @@
             android:exported="false" />
 
         <activity android:name=".SelectLanguage" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".StandardWebViewActivity"/>
     </application>
 
 </manifest>
