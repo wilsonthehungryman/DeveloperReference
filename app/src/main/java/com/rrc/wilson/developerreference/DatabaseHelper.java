@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.SimpleCursorAdapter;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -127,7 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ContentValues vals = new ContentValues();
                 vals.put(COL_UPDATED, System.currentTimeMillis());
                 vals.put(COL_SUPPORTED, 1);
-                vals.put(COL_DOMAINS, "docs.oracle.com:");
+                vals.put(COL_DOMAINS, "docs.oracle.com;");
                 db.update(LANG_TABLE, vals, COL_LANG + " = ? COLLATE NOCASE", new String[]{"Java"});
             }
             db.setTransactionSuccessful();
@@ -329,7 +330,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         StringBuilder s = new StringBuilder();
         for(String url : urls) {
             s.append(url);
-            s.append(":");
+            s.append(";");
         }
         return s.toString();
     }
@@ -338,6 +339,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(urls == null)
             return null;
         else
-            return urls.split(":");
+            return urls.split(";");
     }
 }
