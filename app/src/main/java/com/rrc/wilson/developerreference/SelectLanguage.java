@@ -3,6 +3,8 @@ package com.rrc.wilson.developerreference;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.view.Gravity;
 import android.view.View;
@@ -13,12 +15,14 @@ import android.widget.TextView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class SelectLanguage extends AppCompatActivity {
+public class SelectLanguage extends AppCompatActivity implements android.widget.SearchView.OnQueryTextListener {
 
     LinearLayout mLayout;
     ArrayList<LanguageDescription> languages;
     DatabaseHelper dbHelper;
     SearchView search;
+    ListView listView;
+    LanguageDescriptionAdapter adapter;
     int source;
 
     @Override
@@ -34,16 +38,32 @@ public class SelectLanguage extends AppCompatActivity {
             languages = dbHelper.getSupportedLanguages();
         dbHelper = null;
 
-        mLayout = (LinearLayout) findViewById(R.id.items);
+        mLayout = (LinearLayout) findViewById(R.id.layoutItems);
         search = (SearchView)findViewById(R.id.search);
+        listView = (ListView)findViewById(R.id.listViewLangs);
 
         source = intent.getIntExtra("source", 0);
 
         if(source == R.id.searchOfficial) {
             generateCheckboxes();
         }else if(source == R.id.allLanguages){
-            generateLabels();
+            adapter = new LanguageDescriptionAdapter(this, listView.getId(), languages);
+            listView.setAdapter(adapter);
+            search.setOnQueryTextListener(this);
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return onQueryTextChange(s);
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        Log.d("wilson", "Starting onQueryTextChange s:" + s);
+        adapter.getFilter().filter(s);
+
+        return true;
     }
 
     private void generateCheckboxes(){
@@ -67,18 +87,6 @@ public class SelectLanguage extends AppCompatActivity {
             chkBox.setChecked(false);
             chkBox.setText(lang.getName());
             mLayout.addView(chkBox);
-        }
-    }
-
-    private void generateLabels(){
-        if(languages == null || languages.size() == 0)
-            return;
-
-        for(LanguageDescription lang : languages){
-            TextView textView = new TextView(this);
-            textView.setText(lang.getName());
-            textView.setGravity(Gravity.CENTER);
-            mLayout.addView(textView);
         }
     }
 

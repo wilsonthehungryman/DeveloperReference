@@ -42,7 +42,7 @@ public class LanguageDescriptionAdapter extends ArrayAdapter<LanguageDescription
         if(languageDescription != null){
             TextView lang = (TextView)v.findViewById(R.id.listViewLang);
             lang.setText(languageDescription.getName());
-            
+
             if(languageDescription.supported())
                 lang.setTextColor(Color.GREEN);
         }
