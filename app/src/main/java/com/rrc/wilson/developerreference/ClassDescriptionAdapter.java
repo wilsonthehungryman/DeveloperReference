@@ -77,7 +77,7 @@ public class ClassDescriptionAdapter extends ArrayAdapter<ClassDescription> impl
                 String c = constraint.toString().toUpperCase();
                 for(int i = 0; i < classes.size(); i++){
                     String className = classes.get(i).className.toUpperCase();
-                    if(className.contains(c)) {
+                    if(className.contains(c) || c.contains(className)) {
                         if (className.startsWith(c))
                             topMatches.add(classes.get(i));
                         else

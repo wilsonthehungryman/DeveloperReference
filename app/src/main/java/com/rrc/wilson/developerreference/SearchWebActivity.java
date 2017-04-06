@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -53,6 +54,13 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
             }
         });
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                specificClassSelected(position);
+            }
+        });
+
         if(populateClasses()) {
             adapter = new ClassDescriptionAdapter(this, listView.getId(), classes);
             listView.setAdapter(adapter);
@@ -72,7 +80,6 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
     public boolean onQueryTextChange(String s) {
         Log.d("wilson", "Starting onQueryTextChange s:" + s);
         adapter.getFilter().filter(s);
-        Log.d("wilson", "Leaving onQueryTextChange s:" + s);
 
         return true;
     }
@@ -91,33 +98,17 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
         return true;
     }
 
-    private void generateTextViews(){
-        for(ClassDescription c : classes){
-            TextView v = new TextView(this);
-            v.setText(String.format("%2$s (%1$s)", c.getLanguage(), c.getClassName()));
-            v.setGravity(Gravity.CENTER);
-            mItems.addView(v);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    specificClassSelected((TextView)v);
-                }
-            });
-        }
-    }
+    private void specificClassSelected(int position){
+        ClassDescription classDescription = adapter.getItem(position);
 
-    private void specificClassSelected(TextView v){
-        String name = v.getText().toString().replaceAll("\\s|\\(.*\\)$", "");
-        String[] urls = null;
-        for(ClassDescription c : classes){
-            if(c.getClassName().equals(name)) {
-                urls = c.getUrls();
-                break;
-            }
-        }
+        if(classDescription == null)
+            return;
+
+        String[] urls = classDescription.getUrls();
 
         if(!(urls == null)){
             Intent intent = new Intent(this, StandardWebViewActivity.class);
+            // TODO pass all urls, use tabs on webview
             intent.putExtra("url", urls[0]);
             startActivity(intent);
         } // TODO no urls
