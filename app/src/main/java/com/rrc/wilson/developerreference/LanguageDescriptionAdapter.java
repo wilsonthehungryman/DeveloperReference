@@ -2,6 +2,7 @@ package com.rrc.wilson.developerreference;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,9 @@ public class LanguageDescriptionAdapter extends ArrayAdapter<LanguageDescription
         if(languageDescription != null){
             TextView lang = (TextView)v.findViewById(R.id.listViewLang);
             lang.setText(languageDescription.getName());
+            
+            if(languageDescription.supported())
+                lang.setTextColor(Color.GREEN);
         }
         return v;
     }
