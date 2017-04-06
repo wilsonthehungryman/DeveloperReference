@@ -91,7 +91,6 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
                             mItems.removeView(v);
                             mItems.addView(v, 0);
                         }
-
                     } else
                         v.setVisibility(View.GONE);
                 } else
