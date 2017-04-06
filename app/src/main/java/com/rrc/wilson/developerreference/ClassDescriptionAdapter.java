@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 
 public class ClassDescriptionAdapter extends ArrayAdapter<ClassDescription> implements Filterable {
-    private ArrayList<ClassDescription> classes;
+    private ArrayList<ClassDescription> classes, filteredOutClasses;
     private Context context;
     private Filter filter;
 
@@ -28,6 +28,7 @@ public class ClassDescriptionAdapter extends ArrayAdapter<ClassDescription> impl
         this.classes = classes;
         this.context = context;
         this.filter = createFilter();
+        this.filteredOutClasses = new ArrayList<>();
     }
 
     public View getView(int position, View v, ViewGroup parent){
@@ -55,27 +56,39 @@ public class ClassDescriptionAdapter extends ArrayAdapter<ClassDescription> impl
 
     private Filter createFilter(){
         return new Filter() {
+            byte lastLength = 0;
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults filterResults = new FilterResults();
+
+                if(constraint == null)
+                    return filterResults;
+
+                if(lastLength > constraint.length()){
+                    classes.addAll(filteredOutClasses);
+                    filteredOutClasses.clear();
+                }
+
+                lastLength = (byte)constraint.length();
+
                 ArrayList<ClassDescription> tempList = new ArrayList<>();
                 ArrayList<ClassDescription> topMatches = new ArrayList<>();
 
-                if(constraint != null && classes != null){
-                    String c = constraint.toString().toUpperCase();
-                    for(int i = 0; i < classes.size(); i++){
-                        String className = classes.get(i).className.toUpperCase();
-                        if(className.contains(c)) {
-                            if (className.startsWith(c))
-                                topMatches.add(classes.get(i));
-                            else
-                                tempList.add(classes.get(i));
-                        }
-                    }
-                    topMatches.addAll(tempList);
-                    filterResults.values = topMatches;
-                    filterResults.count = tempList.size();
+                String c = constraint.toString().toUpperCase();
+                for(int i = 0; i < classes.size(); i++){
+                    String className = classes.get(i).className.toUpperCase();
+                    if(className.contains(c)) {
+                        if (className.startsWith(c))
+                            topMatches.add(classes.get(i));
+                        else
+                            tempList.add(classes.get(i));
+                    }else
+                        filteredOutClasses.add(classes.get(i));
                 }
+                topMatches.addAll(tempList);
+                filterResults.values = topMatches;
+                filterResults.count = tempList.size();
+
                 return filterResults;
             }
 
