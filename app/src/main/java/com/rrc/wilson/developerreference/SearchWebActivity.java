@@ -76,13 +76,12 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
     public boolean onQueryTextChange(String s) {
         Log.d("wilson", "Starting onQueryTextChange s:" + s);
         if(s == null || s.length() == 0){
-            for (int i = 0; i < mItems.getChildCount() && s.length() > 2; i++)
+            for (int i = 0; i < mItems.getChildCount(); i++)
                 mItems.getChildAt(i).setVisibility(View.VISIBLE);
-        }else {
+        }else if(s.length() > 2){
             s = s.replaceAll("\\s", "").replaceAll("\\+", "\\+").toUpperCase();
-            for (int i = 0; i < mItems.getChildCount() && s.length() > 2; i++) {
+            for (int i = 0; i < mItems.getChildCount(); i++) {
                 View v = mItems.getChildAt(i);
-                if (!(s.length() == 0)) {
                     //.replaceAll("\\s|^\\(.*\\)", "")
                     String text = ((TextView) v).getText().toString().toUpperCase();
                     if (text.contains(s)) {
@@ -91,11 +90,8 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
                             mItems.removeView(v);
                             mItems.addView(v, 0);
                         }
-
                     } else
                         v.setVisibility(View.GONE);
-                } else
-                    v.setVisibility(View.VISIBLE);
             }
         }
         Log.d("wilson", "Leaving onQueryTextChange s:" + s);
