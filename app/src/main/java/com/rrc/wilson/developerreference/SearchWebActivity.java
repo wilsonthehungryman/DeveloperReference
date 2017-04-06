@@ -44,8 +44,6 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
         listView = (ListView)findViewById(R.id.items);
         search = (SearchView)findViewById(R.id.search);
 
-        Search searcher = new Search(mItems);
-
         search.setOnQueryTextListener(this);
         findViewById(R.id.customGo).setOnClickListener(new View.OnClickListener() {
             @Override

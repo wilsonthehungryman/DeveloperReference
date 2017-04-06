@@ -36,13 +36,6 @@ public class SelectLanguage extends AppCompatActivity {
 
         mLayout = (LinearLayout) findViewById(R.id.items);
         search = (SearchView)findViewById(R.id.search);
-        Search searcher = new Search(mLayout);
-
-        try {
-            search.setOnQueryTextListener(searcher);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         source = intent.getIntExtra("source", 0);
 
