@@ -5,8 +5,8 @@ package com.rrc.wilson.developerreference;
  */
 
 public abstract class ClassDescription {
-    String className, language, nameSpace;
-    String[] urls;
+    private String className, language, nameSpace;
+    private String[] urls;
 
     public ClassDescription(String className, String language) {
         this(className, language, null, null);
@@ -33,6 +33,14 @@ public abstract class ClassDescription {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String getNameSpace() {
+        return nameSpace;
+    }
+
+    public void setNameSpace(String nameSpace) {
+        this.nameSpace = nameSpace;
     }
 
     public String[] getUrls() {

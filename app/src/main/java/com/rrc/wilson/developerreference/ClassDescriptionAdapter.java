@@ -40,10 +40,10 @@ public class ClassDescriptionAdapter extends ArrayAdapter<ClassDescription> impl
         ClassDescription classDescription = classes.get(position);
 
         if(classDescription != null){
-            ((TextView)v.findViewById(R.id.listViewName)).setText(classDescription.className);
-            ((TextView)v.findViewById(R.id.listViewPackage)).setText(classDescription.nameSpace);
+            ((TextView)v.findViewById(R.id.listViewName)).setText(classDescription.getClassName());
+            ((TextView)v.findViewById(R.id.listViewPackage)).setText(classDescription.getNameSpace());
             TextView lang = (TextView)v.findViewById(R.id.listViewLang);
-            lang.setText(classDescription.language);
+            lang.setText(classDescription.getLanguage());
         }
         return v;
     }
@@ -76,7 +76,7 @@ public class ClassDescriptionAdapter extends ArrayAdapter<ClassDescription> impl
 
                 String c = constraint.toString().toUpperCase();
                 for(int i = 0; i < classes.size(); i++){
-                    String className = classes.get(i).className.toUpperCase();
+                    String className = classes.get(i).getClassName().toUpperCase();
                     if(className.contains(c) || c.contains(className)) {
                         if (className.startsWith(c))
                             topMatches.add(classes.get(i));
