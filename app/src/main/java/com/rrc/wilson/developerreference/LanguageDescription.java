@@ -43,4 +43,6 @@ class LanguageDescription {
     public void setUrls(String[] urls) {
         this.urls = urls;
     }
+
+    public boolean supported(){ return supported > 0; }
 }
