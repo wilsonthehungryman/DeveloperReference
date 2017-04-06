@@ -5,16 +5,17 @@ package com.rrc.wilson.developerreference;
  */
 
 public abstract class ClassDescription {
-    protected String className, language;
-    protected String[] urls;
+    String className, language, nameSpace;
+    String[] urls;
 
     public ClassDescription(String className, String language) {
-        this(className, language, null);
+        this(className, language, null, null);
     }
 
-    public ClassDescription(String className, String language, String[] urls) {
+    public ClassDescription(String className, String language, String nameSpace, String[] urls) {
         this.className = className;
         this.language = language;
+        this.nameSpace = nameSpace;
         this.urls = urls;
     }
 

@@ -17,7 +17,7 @@ public class JavaClassDescription extends ClassDescription {
     }
 
     public JavaClassDescription(String className, String packageName, String[] urls) {
-        super(className, "JAVA", urls);
+        super(className, "JAVA", packageName, urls);
         this.packageName = packageName;
     }
 

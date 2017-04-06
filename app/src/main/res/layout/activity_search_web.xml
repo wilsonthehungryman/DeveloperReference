@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.rrc.wilson.developerreference.SearchWebActivity">
+<!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--tools:context="com.rrc.wilson.developerreference.SearchWebActivity">-->
 
 <LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context="com.rrc.wilson.developerreference.SearchWebActivity"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="match_parent" >
     <include android:id="@+id/toolbar"
         layout="@layout/toolbar"/>
     <TextView
@@ -36,12 +39,12 @@
         android:layout_height="wrap_content"
         android:text="@string/orChoosePrebuiltQuery"
         android:layout_gravity="center" />
-    <!--<ListView android:id="@+id/items"-->
+    <ListView android:id="@+id/items"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
+    <!--<LinearLayout android:id="@+id/items"-->
+        <!--android:orientation="vertical"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content" />-->
-    <LinearLayout android:id="@+id/items"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 </LinearLayout>
-</ScrollView>
+<!--</ScrollView>-->

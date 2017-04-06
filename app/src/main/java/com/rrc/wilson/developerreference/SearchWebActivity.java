@@ -11,16 +11,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class SearchWebActivity extends AppCompatActivity implements android.widget.SearchView.OnQueryTextListener{
 
@@ -28,9 +25,9 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
     ArrayList<ClassDescription> classes;
     LinearLayout mItems;
     ListView listView;
+    ClassDescriptionAdapter adapter;
     SearchView search;
     int source;
-    SimpleCursorAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +40,10 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
         languages = intent.getStringArrayListExtra("languages");
         source = intent.getIntExtra("source", -1);
 
-        mItems = (LinearLayout)findViewById(R.id.items);
-//        listView = (ListView)findViewById(R.id.items);
+        listView = (ListView)findViewById(R.id.items);
         search = (SearchView)findViewById(R.id.search);
 
-//        Search searcher = new Search(mItems);
-//        search.setOnQueryTextListener(searcher);
+        Search searcher = new Search(mItems);
 
         search.setOnQueryTextListener(this);
         findViewById(R.id.customGo).setOnClickListener(new View.OnClickListener() {
@@ -58,14 +53,15 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
             }
         });
 
-        if(populateClasses())
-            generateTextViews();
+        if(populateClasses()) {
+            adapter = new ClassDescriptionAdapter(this, listView.getId(), classes);
+            listView.setAdapter(adapter);
+        }
     }
 
     public void processCustomQuery(){
         // TODO custom search
     }
-
 
     @Override
     public boolean onQueryTextSubmit(String s) {
@@ -75,28 +71,10 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
     @Override
     public boolean onQueryTextChange(String s) {
         Log.d("wilson", "Starting onQueryTextChange s:" + s);
-        if(s == null || s.length() == 0){
-            for (int i = 0; i < mItems.getChildCount(); i++)
-                mItems.getChildAt(i).setVisibility(View.VISIBLE);
-        }else if(s.length() > 2){
-            s = s.replaceAll("\\s", "").replaceAll("\\+", "\\+").toUpperCase();
-            for (int i = 0; i < mItems.getChildCount(); i++) {
-                View v = mItems.getChildAt(i);
-                    //.replaceAll("\\s|^\\(.*\\)", "")
-                    String text = ((TextView) v).getText().toString().toUpperCase();
-                    if (text.contains(s)) {
-                        v.setVisibility(View.VISIBLE);
-                        if (text.equals(s)) {
-                            mItems.removeView(v);
-                            mItems.addView(v, 0);
-                        }
-                    } else
-                        v.setVisibility(View.GONE);
-            }
-        }
+        adapter.getFilter().filter(s);
         Log.d("wilson", "Leaving onQueryTextChange s:" + s);
 
-        return false;
+        return true;
     }
 
     private boolean populateClasses(){
