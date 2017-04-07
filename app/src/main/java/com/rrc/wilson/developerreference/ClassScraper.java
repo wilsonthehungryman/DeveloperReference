@@ -31,42 +31,55 @@ public class ClassScraper extends IntentService {
         if (intent == null)
                 return;
 
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
+        DatabaseHelper dbHelper = null;
+        Stack<ClassDescription> classes = null;
+        try {
+            dbHelper = new DatabaseHelper(this);
 
-        boolean updateLangTable = intent.getBooleanExtra("langTable", false);
-        String language = intent.getStringExtra("language");
+            if(intent.getBooleanExtra("cleanHouse", false))
+                dbHelper.cleanHouse();
 
-        if(updateLangTable){
-            SharedPreferences prefs = getSharedPreferences("DeveloperReference", MODE_PRIVATE);
-            Long lastUpdate = prefs.getLong("languageLastUpdate", 0);
-            if(intent.getBooleanExtra("langTableForce", false) || TimeManager.updateLanguage(lastUpdate, System.currentTimeMillis())) {
-                Stack<LanguageDescription> languages = languageScraper();
-                if(dbHelper.insertLanguages(languages)){
-                    SharedPreferences.Editor e = prefs.edit();
-                    e.putLong("languageLastUpdate", System.currentTimeMillis());
-                    e.apply();
+            String language = intent.getStringExtra("language");
+            boolean updateLangTable = intent.getBooleanExtra("langTable", false);// || language.equals("ALL");
+
+            if(updateLangTable){
+                SharedPreferences prefs = getSharedPreferences("DeveloperReference", MODE_PRIVATE);
+                Long lastUpdate = prefs.getLong("languageLastUpdate", 0);
+                if(intent.getBooleanExtra("langTableForce", false) || TimeManager.updateLanguage(lastUpdate, System.currentTimeMillis())) {
+                    Stack<LanguageDescription> languages = languageScraper();
+                    if(dbHelper.insertLanguages(languages)){
+                        SharedPreferences.Editor e = prefs.edit();
+                        e.putLong("languageLastUpdate", System.currentTimeMillis());
+                        e.apply();
+                    }
+
                 }
 
             }
 
+            classes = new Stack<>();
+            boolean force = intent.getBooleanExtra("classTableForce", false);
+            switch(language){
+                case "JAVA":
+                    if(dbHelper.needsUpdate(language))
+                        classes.addAll(javaScraper());
+                    break;
+                case "ALL":
+                    if(force || dbHelper.needsUpdate("JAVA"))
+                        classes.addAll(javaScraper());
+                    break;
+                default:
+                    return;
+            }
+            dbHelper.insertClasses(classes);
+
+        } catch (IllegalStateException e) {
+            intent.putExtra("langTableForce", true);
+            intent.putExtra("classTableForce", true);
+            intent.putExtra("cleanHouse", true);
+            startService(intent);
         }
 
-        Stack<ClassDescription> classes = new Stack<>();
-        boolean force = intent.getBooleanExtra("classTableForce", false);
-        switch(language){
-            case "JAVA":
-                if(dbHelper.needsUpdate(language))
-                    classes.addAll(javaScraper());
-                break;
-            case "ALL":
-                if(force || dbHelper.needsUpdate("JAVA"))
-                    classes.addAll(javaScraper());
-                break;
-            default:
-                return;
-        }
-
-        dbHelper.insertClasses(classes);
     }
 
     Stack<LanguageDescription> languageScraper(){
