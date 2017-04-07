@@ -19,7 +19,7 @@ import java.util.Stack;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 5;
 
     private static final String DB_NAME = "LanguageInfo";
     private static final String CLASS_TABLE = "Classes";
@@ -57,7 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "%3$s TEXT NOT NULL, " +
                 "%4$s TEXT, " +
                 "%5$s TEXT, " +
-                "UNIQUE (%2$s, %3$s) ON CONFLICT REPLACE," +
+                "UNIQUE (%2$s, %3$s, %4$s) ON CONFLICT REPLACE," +
                 "FOREIGN KEY(%2$s) REFERENCES %6$s(_id))",
                 CLASS_TABLE, COL_LANG_FK, COL_NAME, COL_PACKAGE, COL_URL, LANG_TABLE);
 
@@ -106,9 +106,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertClasses(AbstractList<ClassDescription> values){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT COUNT(*) FROM " + LANG_TABLE, null);
+        c.moveToFirst();
+        if(c.getInt(0) < 10){
+            c.close();
+            db.close();
+            throw new IllegalStateException("Language table needs to be updated");
+        }
+        db.close();
         Iterator<ClassDescription> iter = values.iterator();
         boolean java = false;
-        SQLiteDatabase db = this.getWritableDatabase();
+        db = this.getWritableDatabase();
         db.beginTransaction();
 
         try {
@@ -183,20 +192,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         c.close();
         db.close();
 
-        db = getWritableDatabase();
-        ContentValues val = new ContentValues();
-        val.put(COL_LANG, lang.toUpperCase());
-        db.insert(LANG_TABLE, null, val);
-        db.close();
-
         return flag;
     }
 
     public int getLangId(String lang){
         SQLiteDatabase db = getReadableDatabase();
         Cursor c = db.rawQuery("SELECT _id FROM " + LANG_TABLE + " WHERE " + COL_LANG + " = ? COLLATE NOCASE", new String[]{lang});
-        if(!c.moveToFirst())
+        if(!c.moveToFirst()) {
+            c.close();
             return -1;
+        }
         int id = c.getInt(c.getColumnIndex("_id"));
         c.close();
         return id;
@@ -301,6 +306,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public void cleanHouse(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + CLASS_TABLE);
+        db.execSQL("DELETE FROM " + LANG_TABLE);
+        db.close();
+    }
+
     private boolean languageExists(String lang, SQLiteDatabase db){
         Cursor c = db.rawQuery(SELECT_LANG + " WHERE " + COL_LANG + " = ?", new String[]{lang});
         boolean result = false;
@@ -341,4 +353,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else
             return urls.split(";");
     }
+
 }
