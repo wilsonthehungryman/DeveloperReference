@@ -1,6 +1,8 @@
 package com.rrc.wilson.developerreference;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,8 @@ import android.widget.TextView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SelectLanguage extends AppCompatActivity implements android.widget.SearchView.OnQueryTextListener {
 
@@ -31,6 +35,9 @@ public class SelectLanguage extends AppCompatActivity implements android.widget.
         setContentView(R.layout.activity_select_language);
 
         Intent intent = getIntent();
+
+        source = intent.getIntExtra("source", 0);
+
         dbHelper = new DatabaseHelper(this);
         if(intent.getBooleanExtra("allLanguages", false))
             languages = dbHelper.getLanguages();
@@ -42,9 +49,7 @@ public class SelectLanguage extends AppCompatActivity implements android.widget.
         search = (SearchView)findViewById(R.id.search);
         listView = (ListView)findViewById(R.id.listViewLangs);
 
-        source = intent.getIntExtra("source", 0);
-
-        if(source == R.id.searchOfficial) {
+        if(source == R.id.searchOfficial || source == R.id.selectDefaultLang) {
             generateCheckboxes();
         }else if(source == R.id.allLanguages){
             adapter = new LanguageDescriptionAdapter(this, listView.getId(), languages);
@@ -82,9 +87,16 @@ public class SelectLanguage extends AppCompatActivity implements android.widget.
             }
         });
 
+        Set<String> defaultLangs = getSharedPreferences("prefs", MODE_PRIVATE).getStringSet("defaultLangs", new HashSet<String>());
+
         for(LanguageDescription lang : languages){
             CheckBox chkBox = new CheckBox(this);
-            chkBox.setChecked(false);
+
+            if(defaultLangs.contains(lang.getName()))
+                chkBox.setChecked(true);
+            else
+                chkBox.setChecked(false);
+
             chkBox.setText(lang.getName());
             mLayout.addView(chkBox);
         }
@@ -92,23 +104,31 @@ public class SelectLanguage extends AppCompatActivity implements android.widget.
 
     private void processGo(){
         ArrayList<String> languages = getSelectedLanguages();
-        if(languages.size() == 0)
-            // TODO no language selected logic
-            return;
-
         Intent intent = null;
+
         switch(source){
             case R.id.searchOfficial:
                 intent = new Intent(this, SearchWebActivity.class);
                 break;
+            case R.id.selectDefaultLang:
+                intent = new Intent();
+                setResult(Activity.RESULT_OK, intent);
+                break;
         }
+
+        if(languages.size() == 0 && source != R.id.selectDefaultLang)
+            // TODO no language selected logic
+            return;
 
         if(intent == null)
             return;
 
         intent.putExtra("source", source);
         intent.putExtra("languages", languages);
-        startActivity(intent);
+        if(source == R.id.selectDefaultLang)
+            onBackPressed();
+        else
+            startActivity(intent);
     }
 
     private ArrayList<String> getSelectedLanguages(){

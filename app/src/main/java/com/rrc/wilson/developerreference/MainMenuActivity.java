@@ -1,6 +1,7 @@
 package com.rrc.wilson.developerreference;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainMenuActivity extends AppCompatActivity {
 
@@ -44,6 +47,8 @@ public class MainMenuActivity extends AppCompatActivity {
     private void processClick(View v){
         Intent intent = new Intent(this, SelectLanguage.class);
         boolean startNextActivity = false;
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        boolean skipLangSelect = prefs.getBoolean("skipLangSelect", false);
         switch(v.getId()){
             case R.id.searchAll:
                 break;
@@ -54,6 +59,7 @@ public class MainMenuActivity extends AppCompatActivity {
             case R.id.allLanguages:
                 intent.putExtra("source", R.id.allLanguages);
                 intent.putExtra("allLanguages", true);
+                skipLangSelect = false;
                 startNextActivity = true;
                 break;
             case R.id.searchForum:
@@ -63,8 +69,15 @@ public class MainMenuActivity extends AppCompatActivity {
                 Toast.makeText(this, "Coming soon!", Toast.LENGTH_SHORT);
                 break;
         }
-        if(startNextActivity)
+        if(startNextActivity) {
+            if(skipLangSelect) {
+                intent.setClass(this, SearchWebActivity.class);
+                ArrayList<String> langs = new ArrayList<String>(2);
+                langs.add(prefs.getString("defaultLang", "JAVA"));
+                intent.putExtra("languages", langs);
+            }
             startActivity(intent);
+        }
     }
 
     private void startClassScraper(){

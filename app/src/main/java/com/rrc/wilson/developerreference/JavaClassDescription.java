@@ -9,7 +9,7 @@ public class JavaClassDescription extends ClassDescription {
     private String packageName;
 
     public JavaClassDescription(String className) {
-        this(className, null);
+        this(className, null, null);
     }
 
     public JavaClassDescription(String className, String packageName) {
