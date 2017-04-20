@@ -47,7 +47,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private void processClick(View v){
         Intent intent = new Intent(this, SelectLanguage.class);
         boolean startNextActivity = false;
-        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("DeveloperReference", MODE_PRIVATE);
         boolean skipLangSelect = prefs.getBoolean("skipLangSelect", false);
         switch(v.getId()){
             case R.id.searchAll:

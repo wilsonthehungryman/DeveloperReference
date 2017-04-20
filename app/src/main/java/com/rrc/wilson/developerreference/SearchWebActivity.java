@@ -2,6 +2,7 @@ package com.rrc.wilson.developerreference;
 
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -105,10 +106,15 @@ public class SearchWebActivity extends AppCompatActivity implements android.widg
         String[] urls = classDescription.getUrls();
 
         if(!(urls == null)){
-            Intent intent = new Intent(this, StandardWebViewActivity.class);
-            // TODO pass all urls, use tabs on webview
-            intent.putExtra("url", urls[0]);
-            startActivity(intent);
+            if(getSharedPreferences("DeveloperReference", MODE_PRIVATE).getBoolean("useBrowser", false)){
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urls[0]));
+                startActivity(intent);
+            }else {
+                Intent intent = new Intent(this, StandardWebViewActivity.class);
+                // TODO pass all urls, use tabs on webview
+                intent.putExtra("url", urls[0]);
+                startActivity(intent);
+            }
         } // TODO no urls
     }
 

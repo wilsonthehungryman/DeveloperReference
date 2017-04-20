@@ -18,6 +18,7 @@
     <!-- Settings -->
     <string name="forceRefresh">Refresh all data in db</string>
     <string name="selectDefaultLang">Select Default Language(s)</string>
+    <string name="useBrowser">Open links in default browser</string>
     <!-- Common -->
     <string name="SelectLang">Select one or more languages</string>
     <string name="Go">Go</string>
